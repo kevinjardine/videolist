@@ -21,19 +21,50 @@ if(empty($vars['guid'])){
 ?>
 <div>
 <label><?php echo elgg_echo("videolist:video_url") ?></label><br />
-<?php 
+<?php
 	echo elgg_view("input/text", array(
 		'name' => 'video_url',
 		'value' => $vars['video_url'],
 	));
 ?>
 </div>
-<div id="videolist-metadata" class="hidden">		
+<?php
+$allow_transcoding = elgg_get_plugin_setting('transcode','videolist') == 'yes';
+if ($allow_transcoding) {
+?>
+<div>
+<label><?php echo elgg_echo("videolist:or") ?></label>
+</div>
+<div>
+<label><?php echo elgg_echo("videolist:video_upload") ?></label><br />
+<?php
+	echo elgg_view("input/file", array(
+		'name' => 'video_file',
+	));
+?>
+</div>
+<?php
+}
+?>
+<div id="videolist-metadata" class="hidden">
 	<?php echo $input_bit;?>
 </div>
 <?php
 } else {
 	echo $input_bit;
+	$video = get_entity($vars['guid']);
+	if ($video->videotype === 'uploaded') {
+  // let the user replace the existing thumbnail
+?>
+<div>
+	<label><?php echo elgg_echo('videolist:replace_thumbnail') ?></label>
+	<?php echo elgg_view("input/file", array(
+			'name' => 'thumbnail',
+		));
+	?>
+</div>
+<?php
+  }
 }
 
 $cats = elgg_view('categories', $vars);

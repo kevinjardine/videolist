@@ -22,7 +22,12 @@ if (elgg_instanceof($page_owner, 'user')) {
 elgg_push_breadcrumb($title);
 
 // create form
-$form_vars = array();
+$allow_transcoding = elgg_get_plugin_setting('transcode','videolist') == 'yes';
+if ($allow_transcoding) {
+  $form_vars = array('enctype' => 'multipart/form-data');
+} else {
+  $form_vars = array();
+}
 $body_vars = array(
 	'container_guid' => $page_owner->guid,
 	'access_id' => elgg_instanceof($page_owner, 'user') ? ACCESS_DEFAULT : $page_owner->group_acl,

@@ -18,6 +18,27 @@ foreach ($variables as $name => $type) {
 	}
 }
 
+//error_log(print_r($_FILES,TRUE));
+
+$allow_transcoding = elgg_get_plugin_setting('transcode','videolist') == 'yes';
+// TODO - handle an upload error
+if ($allow_transcoding && isset($_FILES)) {
+  if (isset($_FILES['video_file']) && ($_FILES['video_file']['error'] === UPLOAD_ERR_OK)) {
+    $video_file = $_FILES['video_file'];
+  } else {
+    $video_file = FALSE;
+  }
+
+  if (isset($_FILES['thumbnail']) && ($_FILES['thumbnail']['error'] === UPLOAD_ERR_OK)) {
+    $thumbnail_file = $_FILES['thumbnail'];
+  } else {
+    $thumbnail_file = FALSE;
+  }
+} else {
+  $video_file = FALSE;
+  $thumbnail_file = FALSE;
+}
+
 // Get guids
 $video_guid = (int)get_input('video_guid');
 $container_guid = (int)get_input('container_guid');
@@ -27,25 +48,27 @@ elgg_make_sticky_form('videolist');
 elgg_load_library('elgg:videolist');
 
 if (!$video_guid) {
-	$input['video_url'] = elgg_trigger_plugin_hook('videolist:preprocess', 'url', $input, $input['video_url']);
+  if (!$video_file) {
+  	$input['video_url'] = elgg_trigger_plugin_hook('videolist:preprocess', 'url', $input, $input['video_url']);
 
-	if (!$input['video_url']) {
-		register_error(elgg_echo('videolist:error:no_url'));
-		forward(REFERER);
-	}
+  	if (!$input['video_url']) {
+  		register_error(elgg_echo('videolist:error:no_url'));
+  		forward(REFERER);
+  	}
 
-	$attributesPlatform = videolist_parse_url($input['video_url']);
+  	$attributesPlatform = videolist_parse_url($input['video_url']);
 
-	if (!$attributesPlatform) {
-		register_error(elgg_echo('videolist:error:invalid_url'));
-		forward(REFERER);
-	}
-	list ($attributes, $platform) = $attributesPlatform;
-	/* @var Videolist_PlatformInterface $platform */
+  	if (!$attributesPlatform) {
+  		register_error(elgg_echo('videolist:error:invalid_url'));
+  		forward(REFERER);
+  	}
+  	list ($attributes, $platform) = $attributesPlatform;
+  	/* @var Videolist_PlatformInterface $platform */
 
-	$attributes = array_merge($attributes, $platform->getData($attributes));
+  	$attributes = array_merge($attributes, $platform->getData($attributes));
 
-	$input = array_merge($attributes, $input);
+  	$input = array_merge($attributes, $input);
+  }
 } else {
 	unset($input['video_url']);
 }
@@ -74,9 +97,16 @@ $video->container_guid = $container_guid;
 if ($video->save()) {
 
 	elgg_clear_sticky_form('videolist');
-	
-	// Let's save the thumbnail in the data folder
-    $thumb_url = $video->thumbnail;
+
+	if ($video_file) {
+	  videolist_transcode($video,$video_file['tmp_name']);
+	} else {
+	  // Let's save the thumbnail in the data folder
+	  if ($thumbnail_file) {
+	    $thumb_url = $thumbnail_file['tmp_name'];
+	  } else {
+      $thumb_url = $video->thumbnail;
+	  }
     if ($thumb_url) {
         $thumbnail = file_get_contents($thumb_url);
         if ($thumbnail) {
@@ -89,6 +119,7 @@ if ($video->save()) {
             $filehandler->close();
         }
     }
+	}
 
 	system_message(elgg_echo('videolist:saved'));
 

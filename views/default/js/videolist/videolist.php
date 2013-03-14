@@ -1,4 +1,4 @@
-<?php 
+<?php
 // load json2 to support older browsers
 elgg_load_js('elgg.videolist.json2');
 ?>
@@ -10,10 +10,21 @@ elgg.videolist.init = function () {
 };
 
 elgg.videolist.getMetadata = function(e) {
-	elgg.action('videolist/get_metadata_from_url', {
-		data: { url: $('[name="video_url"]').val() },
-		success: elgg.videolist.handleMetadata
-	});
+	var video_url = $('[name="video_url"]').val();
+	if (video_url) {
+  	elgg.action('videolist/get_metadata_from_url', {
+  		data: { url: video_url },
+  		success: elgg.videolist.handleMetadata
+  	});
+	} else {
+		// assuming this is a video upload
+		// so just ask for the metadata
+		// need to add better error checking here?
+		$('#videolist-metadata').show().removeClass('hidden');
+		$('#videolist-continue-button').hide();
+		$('#videolist-submit-button').show();
+		$('input[name="title"]')[0].focus();
+	}
 	e.preventDefault();
 	return false;
 };
@@ -49,7 +60,7 @@ elgg.videolist.handleMetadata = function(result) {
 		$('#videolist-continue-button').hide();
 		$('#videolist-submit-button').show();
 		$('input[name="title"]')[0].focus();
-	}	
+	}
 };
 
 elgg.register_hook_handler('init', 'system', elgg.videolist.init);

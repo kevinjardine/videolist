@@ -4,7 +4,7 @@
  *
  * @package ElggVideolist
  */
- 
+
 $english = array(
 
 	/**
@@ -61,10 +61,11 @@ View and comment on the new video:
 	 * Status and error messages
 	 */
 	'videolist:error:no_save' => 'There was an error in saving the video, please try after sometime',
+	'videolist:error:no_url' => 'You must provide a video URL.',
 	'videolist:saved' => 'Your video has been saved successfully!',
 	'videolist:deleted' => 'Your video was removed successfully!',
 	'videolist:deletefailed' => 'Unfortunately, this video could not be removed now. Please try again later',
-	
+
 
 	/**
 	 * Widget
@@ -73,7 +74,36 @@ View and comment on the new video:
 	'videolist:num_videos' => 'Number of videos to display',
 	'videolist:widget:description' => 'Your personal video playlist.',
 	'videolist:continue' => "Continue",
-	
+
+	/*
+	 * Transcoding
+	 */
+
+  'videolist:or' => '-- OR --',
+  'videolist:video_upload' => 'Upload video file',
+  'videolist:downloadfailed' => 'Cannot download video',
+  'videolist:invalidtype' => 'Video has invalid type',
+  'videolist:processing' => 'Your video is currently being processed. Please reload this page in a minute or two.',
+  'videolist:transcode_failed' => 'Your video could not be processed. Please check the file you uploaded and try again or contact the site administrator.',
+  'videolist:replace_thumbnail' => "Replace thumbnail (should be jpg)",
+
+	/*
+	 * Settings
+	 */
+
+'videolist:settings:transcode:title' => 'Support transcoding',
+'videolist:settings:transcode:description' => 'Support uploading and transcoding videos using ffmpeg.',
+'videolist:settings:ffmpeg_location:title' => 'Location for ffmpeg',
+'videolist:settings:ffmpeg_location:description' => 'If you are supporting transcoding, this is the location of the ffmpeg binary on your file system.',
+'videolist:settings:wget_location:title' => 'Location for wget',
+'videolist:settings:wget_location:description' => 'If you are supporting transcoding, this is the location of the wget binary on your file system.',
+'videolist:settings:thumbnail_command:title' => 'Thumbnail command',
+'videolist:settings:thumbnail_command:description' => 'If you are supporting transcoding, this is the command string to allow ffmpeg to create video thumbnails.',
+'videolist:settings:flash_command:title' => 'Flash command',
+'videolist:settings:flash_command:description' => 'If you are supporting transcoding, this is the command string to allow ffmpeg to create Flash (flv) videos.',
+'videolist:settings:h264_command:title' => 'H.264 command',
+'videolist:settings:h264_command:description' => 'If you are supporting transcoding, this is the command string to allow ffmpeg to create H.264 (mp4) videos.',
+
 );
 
 add_translation("en", $english);

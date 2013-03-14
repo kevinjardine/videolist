@@ -30,7 +30,12 @@ elgg_push_breadcrumb($title);
 
 elgg_set_page_owner_guid($container->guid);
 
-$form_vars = array();
+$allow_transcoding = elgg_get_plugin_setting('transcode','videolist') == 'yes';
+if ($allow_transcoding) {
+  $form_vars = array('enctype' => 'multipart/form-data');
+} else {
+  $form_vars = array();
+}
 $body_vars = array('guid' => $guid);
 
 foreach(array_keys(elgg_get_config('videolist')) as $variable) {
