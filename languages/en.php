@@ -86,6 +86,7 @@ View and comment on the new video:
   'videolist:processing' => 'Your video is currently being processed. Please reload this page in a minute or two.',
   'videolist:transcode_failed' => 'Your video could not be processed. Please check the file you uploaded and try again or contact the site administrator.',
   'videolist:replace_thumbnail' => "Replace thumbnail (should be jpg)",
+  'videolist:no_capabilities' => 'No video playback capabilities',
 
 	/*
 	 * Settings
@@ -99,8 +100,10 @@ View and comment on the new video:
 'videolist:settings:wget_location:description' => 'If you are supporting transcoding, this is the location of the wget binary on your file system.',
 'videolist:settings:thumbnail_command:title' => 'Thumbnail command',
 'videolist:settings:thumbnail_command:description' => 'If you are supporting transcoding, this is the command string to allow ffmpeg to create video thumbnails.',
-'videolist:settings:flash_command:title' => 'Flash command',
-'videolist:settings:flash_command:description' => 'If you are supporting transcoding, this is the command string to allow ffmpeg to create Flash (flv) videos.',
+'videolist:settings:poster_command:title' => 'Poster command',
+'videolist:settings:poster_command:description' => 'If you are supporting transcoding, this is the command string to allow ffmpeg to create video posters (full size images used to represent a video before it plays).',
+'videolist:settings:webm_command:title' => 'WebM command',
+'videolist:settings:webm_command:description' => 'If you are supporting transcoding, this is the command string to allow ffmpeg to create WebM (webm) videos.',
 'videolist:settings:h264_command:title' => 'H.264 command',
 'videolist:settings:h264_command:description' => 'If you are supporting transcoding, this is the command string to allow ffmpeg to create H.264 (mp4) videos.',
 

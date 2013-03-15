@@ -44,11 +44,20 @@ echo elgg_view('input/text', array(
 echo '</div>';
 
 echo '<div>';
-echo '<h3>'.elgg_echo('videolist:settings:flash_command:title').'</h3>';
-echo '<p>'.elgg_echo('videolist:settings:flash_command:description').'</p>';
+echo '<h3>'.elgg_echo('videolist:settings:poster_command:title').'</h3>';
+echo '<p>'.elgg_echo('videolist:settings:poster_command:description').'</p>';
 echo elgg_view('input/text', array(
-    'name' => 'params[flash_command]',
-    'value' => $vars['entity']->flash_command,
+    'name' => 'params[poster_command]',
+    'value' => $vars['entity']->poster_command,
+));
+echo '</div>';
+
+echo '<div>';
+echo '<h3>'.elgg_echo('videolist:settings:webm_command:title').'</h3>';
+echo '<p>'.elgg_echo('videolist:settings:webm_command:description').'</p>';
+echo elgg_view('input/text', array(
+    'name' => 'params[webm_command]',
+    'value' => $vars['entity']->webm_command,
 ));
 echo '</div>';
 

@@ -25,17 +25,23 @@ if ($video_type == 'h264') {
 	$mime = "video/mp4";
 	$full_filename = videolist_get_h264_output_name($video);
 	$filename = 'video.mp4';
-} else if ($video_type == 'flash') {
-  $mime = "video/flv";
-  $full_filename = videolist_get_flash_output_name($video);
-  $filename = 'video.flv';
+} else if ($video_type == 'webm') {
+  $mime = "video/webm";
+  $full_filename = videolist_get_webm_output_name($video);
+  $filename = 'video.webm';
+} else if ($video_type == 'poster') {
+    $mime = "image/jpeg";
+    $full_filename = videolist_get_poster_output_name($video);
+    $filename = 'poster.jpg';
 } else {
   register_error(elgg_echo('videolist:invalidtype'));
   forward();
 }
 
 header("Content-type: $mime");
-//header("Content-Disposition: attachment;filename=".$filename);
+if ($video_type == 'poster') {
+  header("Content-Disposition: inline; filename=\"$filename\"");
+}
 
 if ( isset($_SERVER['HTTP_RANGE']) ) {
   // handle iOS byte range requirement

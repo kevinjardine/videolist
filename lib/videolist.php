@@ -69,10 +69,10 @@ function videolist_parse_url($url) {
 	return false;
 }
 
-function videolist_get_flash_output_name($video) {
+function videolist_get_webm_output_name($video) {
   $file = new ElggFile();
 	$file->owner_guid = $video->owner_guid;
-	$file->setFilename("videolist/vids/{$video->guid}.flv");
+	$file->setFilename("videolist/vids/{$video->guid}.webm");
 	return $file->getFilenameOnFilestore();
 }
 
@@ -97,6 +97,13 @@ function videolist_get_thumbnail_output_name($video) {
   return $file->getFilenameOnFilestore();
 }
 
+function videolist_get_poster_output_name($video) {
+  $file = new ElggFile();
+  $file->owner_guid = $video->owner_guid;
+  $file->setFilename("videolist/{$video->guid}.poster.jpg");
+  return $file->getFilenameOnFilestore();
+}
+
 function videolist_transcode($video, $input_file) {
   if (elgg_instanceof($video,'object','videolist_item') && file_exists($input_file)) {
     $video->videotype = 'transcoding';
@@ -107,9 +114,9 @@ function videolist_transcode($video, $input_file) {
     $ffmpeg_location = elgg_get_plugin_setting('ffmpeg_location','videolist');
     $wget_location = elgg_get_plugin_setting('wget_location','videolist');
     if ($ffmpeg_location) {
-      $flash_output = videolist_get_flash_output_name($video);
+      $webm_output = videolist_get_webm_output_name($video);
       // need to make sure that the appropriate videolist/vids directory already exists
-      $path_parts = pathinfo($flash_output);
+      $path_parts = pathinfo($webm_output);
       $dir = $path_parts['dirname'];
       if (!file_exists($dir)) {
         mkdir($dir,0700,TRUE);
@@ -123,22 +130,27 @@ function videolist_transcode($video, $input_file) {
       // generate the script commands
       $input_file = $new_location;
       $thumbnail_bit = elgg_get_plugin_setting('thumbnail_command','videolist');
-      $thumbnail_bit = str_replace("[inputFile]",$input_file,$thumbnail_bit);
-      $thumbnail_bit = str_replace("[outputFile]",videolist_get_thumbnail_output_name($video),$thumbnail_bit);
+      $thumbnail_bit = str_replace("[inputFile]",escapeshellarg($input_file),$thumbnail_bit);
+      $thumbnail_bit = str_replace("[outputFile]",escapeshellarg(videolist_get_thumbnail_output_name($video)),$thumbnail_bit);
       $thumbnail_command = $ffmpeg_location.' '.$thumbnail_bit;
 
-      $flash_bit = elgg_get_plugin_setting('flash_command','videolist');
-      $flash_bit = str_replace("[inputFile]",$input_file,$flash_bit);
-      $flash_bit = str_replace("[outputFile]",$flash_output,$flash_bit);
-      $flash_command = $ffmpeg_location.' '.$flash_bit;
+      $poster_bit = elgg_get_plugin_setting('poster_command','videolist');
+      $poster_bit = str_replace("[inputFile]",escapeshellarg($input_file),$poster_bit);
+      $poster_bit = str_replace("[outputFile]",escapeshellarg(videolist_get_poster_output_name($video)),$poster_bit);
+      $poster_command = $ffmpeg_location.' '.$poster_bit;
+
+      $webm_bit = elgg_get_plugin_setting('webm_command','videolist');
+      $webm_bit = str_replace("[inputFile]",escapeshellarg($input_file),$webm_bit);
+      $webm_bit = str_replace("[outputFile]",escapeshellarg($webm_output),$webm_bit);
+      $webm_command = $ffmpeg_location.' '.$webm_bit;
 
       $h264_bit = elgg_get_plugin_setting('h264_command','videolist');
-      $h264_bit = str_replace("[inputFile]",$input_file,$h264_bit);
-      $h264_bit = str_replace("[outputFile]",videolist_get_h264_output_name($video),$h264_bit);
+      $h264_bit = str_replace("[inputFile]",escapeshellarg($input_file),$h264_bit);
+      $h264_bit = str_replace("[outputFile]",escapeshellarg(videolist_get_h264_output_name($video)),$h264_bit);
       $h264_command = $ffmpeg_location.' '.$h264_bit;
 
-      $update_command = $wget_location.' --spider '.elgg_get_site_url().'videolist/transcode_complete/'.$video->guid;
-      $cmds = array($flash_command,$h264_command,$thumbnail_command,$update_command);
+      $update_command = $wget_location.' --spider '.escapeshellarg(elgg_get_site_url().'videolist/transcode_complete/'.$video->guid);
+      $cmds = array($webm_command,$h264_command,$thumbnail_command,$poster_command,$update_command);
 
       if (substr(php_uname(), 0, 7) == "Windows") {
         $path_parts = pathinfo($tfn);
@@ -181,10 +193,10 @@ function videolist_transcode_complete($guid) {
   if (elgg_instanceof($video,'object','videolist_item')) {
     // sanity checks
     $thumbnail_file = videolist_get_thumbnail_output_name($video);
-    $flash_file = videolist_get_flash_output_name($video);
+    $webm_file = videolist_get_webm_output_name($video);
     $h264_file = videolist_get_h264_output_name($video);
-    if (file_exists($thumbnail_file) && file_exists($flash_file) && file_exists($h264_file)) {
-      if (filesize($thumbnail_file) && filesize($flash_file) && filesize($h264_file)) {
+    if (file_exists($thumbnail_file) && file_exists($webm_file) && file_exists($h264_file)) {
+      if (filesize($thumbnail_file) && filesize($webm_file) && filesize($h264_file)) {
         $video->videotype = "uploaded";
         $video->thumbnail = 1;
         unlink($video->transcode_script_file);

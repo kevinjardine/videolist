@@ -24,7 +24,8 @@ $allow_transcoding = elgg_get_plugin_setting('transcode','videolist') == 'yes';
 elgg_load_library('elgg:videolist');
 $thumbnail_file = videolist_get_thumbnail_output_name($videolist_item);
 if ($allow_transcoding) {
-  $flash_file = videolist_get_flash_output_name($videolist_item);
+  $poster_file = videolist_get_poster_output_name($videolist_item);
+  $webm_file = videolist_get_webm_output_name($videolist_item);
   $h264_file = videolist_get_h264_output_name($videolist_item);
   $orig_file = videolist_get_orig_output_name($videolist_item);
 }
@@ -34,7 +35,8 @@ if (!$videolist_item->delete()) {
   // tidy up by deleting the thumbnail and related files
   unlink($thumbnail_file);
   if ($allow_transcoding) {
-    unlink($flash_file);
+    unlink($poster_file);
+    unlink($webm_file);
     unlink($h264_file);
     unlink($orig_file);
   }
