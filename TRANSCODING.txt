@@ -14,7 +14,7 @@ The ffmpeg command strings will vary depending upon the version of ffmpeg you ha
 
 The set of command strings below has been tested with a recent (March 2013) version of ffmpeg and produces videos that display on iOS, Android and desktop browsers:
 
-Thumbnail image (160x9)
+Thumbnail image (160x90)
 
 -i [inputFile] -vframes 1 -an -s 160x90 -ss 15 [outputFile]
 
@@ -29,3 +29,5 @@ WebM video
 H.264 video
 
 -i [inputFile] -strict experimental -acodec aac -ac 2 -ab 160k -s 640x360 -vcodec libx264 -preset fast -profile:v baseline -f mp4  [outputFile]
+
+The tokens "[inputFile]" and "[outputFile]" will be automatically replaced by the appropriate file names during the transcoding process for each video.
