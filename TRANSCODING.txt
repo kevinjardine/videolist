@@ -1,0 +1,31 @@
+videolist optionally supports uploading video files to your local server and transcoding them to the main web video formats using ffmpeg.
+
+The upload/transcode feature is not recommended unless you have the bandwidth and disk space to support large files and the technical expertise to install ffmpeg.
+
+Uploaded videos are transcoded to the H.264 and WebM codecs and displayed using the MediaElement video player:
+
+http://mediaelementjs.com/
+
+This player uses HTML5 features to display video in recent browsers and Flash otherwise.
+
+To use the transcoding feature, you need to toggle it on in the plugin settings. You also need to provide the file system locations of the ffmpeg and wget binaries as well as four ffmpeg command strings.
+
+The ffmpeg command strings will vary depending upon the version of ffmpeg you have installed and your local needs.
+
+The set of command strings below has been tested with a recent (March 2013) version of ffmpeg and produces videos that display on iOS, Android and desktop browsers:
+
+Thumbnail image (160x9)
+
+-i [inputFile] -vframes 1 -an -s 160x90 -ss 15 [outputFile]
+
+Poster image (fullsize 640x360)
+
+-i [inputFile] -vframes 1 -an -s 640x360 -ss 15 [outputFile]
+
+WebM video
+
+-i [inputFile]  -s 640x360 -c:v libvpx -level 216 -profile 0 -qmax 42 -qmin 10 -c:a libvorbis -f webm [outputFile]
+
+H.264 video
+
+-i [inputFile] -strict experimental -acodec aac -ac 2 -ab 160k -s 640x360 -vcodec libx264 -preset fast -profile:v baseline -f mp4  [outputFile]
